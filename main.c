@@ -38,7 +38,7 @@
 // AD0-AD7 PB0-7 (40-44, 1-3) 	AD8-AD15 PA0-7 (37-30)		A16-23 / D0-D7 PC0-7 (19-26)
 // *WR PD6 (13)						*RD PD5 (14)					*MREQ/CS PD4 (15)			CS2/RST PE2 (16)
 
-#define F_CPU 8000000 // 8 MHz
+#define F_CPU 6000000 // 6 MHz
 #define PCB_VERSION 4
 #define FIRMWARE_VERSION 22
 
@@ -84,17 +84,17 @@ int main(void) {
 		
 		// Switch voltage if requested
 		else if (receivedChar == VOLTAGE_3_3V) {
-			PORTD &= ~(1<<VOLTAGE_SELECT);
+			/*PORTD &= ~(1<<VOLTAGE_SELECT);*/
 			cartMode = GBA_MODE;
-			PORTE |= (1<<LED_3V);
-			PORTD &= ~(1<<LED_5V);
+			/*PORTE |= (1<<LED_3V);
+			PORTD &= ~(1<<LED_5V);*/
 			stop_timeout_timer();
 		}
 		else if (receivedChar == VOLTAGE_5V) {
-			PORTD |= (1<<VOLTAGE_SELECT);
+			/*PORTD |= (1<<VOLTAGE_SELECT);*/
 			cartMode = GB_MODE;
-			PORTD |= (1<<LED_5V);
-			PORTE &= ~(1<<LED_3V);
+			/*PORTD |= (1<<LED_5V);
+			PORTE &= ~(1<<LED_3V);*/
 			stop_timeout_timer();
 		}
 		
@@ -400,7 +400,7 @@ int main(void) {
 			flashWriteWePin = USART_Receive();
 			
 			if (flashWriteWePin == WE_AS_AUDIO_PIN) {
-				DDRE |= (1<<AUDIO_PIN);
+				DDRD |= (1<<AUDIO_PIN);
 				audioPin_high;
 			}
 		}

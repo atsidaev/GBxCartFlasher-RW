@@ -24,16 +24,16 @@
 #define false 0
 #define true 1
 
-#define VOLTAGE_SELECT PD2
-#define ACTIVITY_LED PD3
-#define LED_5V PD7
-#define LED_3V PE0
+/*#define VOLTAGE_SELECT PD2*/
+#define ACTIVITY_LED PD2
+/*#define LED_5V PD7
+#define LED_3V PE0*/
 
-#define WR_PIN PD6
-#define RD_PIN PD5
-#define CS_MREQ_PIN PD4
-#define CS2_PIN PE2
-#define AUDIO_PIN PE1
+#define WR_PIN PD3
+#define RD_PIN PD4
+#define CS_MREQ_PIN PD5
+#define CS2_PIN PD6
+#define AUDIO_PIN PD7
 
 #define wrPin_high	PORTD |= (1<<WR_PIN);
 #define wrPin_low		PORTD &= ~(1<<WR_PIN);
@@ -41,10 +41,10 @@
 #define rdPin_low		PORTD &= ~(1<<RD_PIN);
 #define cs_mreqPin_high		PORTD |= (1<<CS_MREQ_PIN);
 #define cs_mreqPin_low		PORTD &= ~(1<<CS_MREQ_PIN);
-#define cs2Pin_high		PORTE |= (1<<CS2_PIN);
-#define cs2Pin_low		PORTE &= ~(1<<CS2_PIN);
-#define audioPin_high	PORTE |= (1<<AUDIO_PIN);
-#define audioPin_low		PORTE &= ~(1<<AUDIO_PIN);
+#define cs2Pin_high		PORTD |= (1<<CS2_PIN);
+#define cs2Pin_low		PORTD &= ~(1<<CS2_PIN);
+#define audioPin_high	PORTD |= (1<<AUDIO_PIN);
+#define audioPin_low		PORTD &= ~(1<<AUDIO_PIN);
 
 #define GB_MODE 1
 #define GBA_MODE 2
@@ -751,9 +751,9 @@ void gb_flash_write_byte_special(uint16_t address, uint8_t data) {
 	DDR_DATA7_0 = 0;
 	
 	// Pulse reset
-	PORTE &= ~(1<<CS2_PIN);
+	PORTD &= ~(1<<CS2_PIN);
 	_delay_us(50);
-	PORTE |= (1<<CS2_PIN);
+	PORTD |= (1<<CS2_PIN);
 	_delay_us(50);
 }
 
@@ -983,8 +983,7 @@ void setup(void) {
 	rd_wr_csmreq_cs2_reset();
 	
 	// Set outputs
-	DDRD |= (1<<ACTIVITY_LED) | (1<<WR_PIN) | (1<<RD_PIN) | (1<<CS_MREQ_PIN) | (1<<LED_5V) | (1<<VOLTAGE_SELECT);
-	DDRE |= (1<<CS2_PIN) | (1<<LED_3V);
+	DDRD |= (1<<ACTIVITY_LED) | (1<<WR_PIN) | (1<<RD_PIN) | (1<<CS_MREQ_PIN) | (1<<CS2_PIN);
 	
 	// Set all pins as inputs
 	PORT_DATA7_0 = 0;
@@ -995,14 +994,14 @@ void setup(void) {
 	DDR_ADDR15_8 = 0;
 	
 	// Light up 3.3V or 5V
-	if (cartMode == GB_MODE) {
+	/*if (cartMode == GB_MODE) {
 		PORTD |= (1<<LED_5V);
 		PORTE &= ~(1<<LED_3V);
 	}
 	else {
 		PORTE |= (1<<LED_3V);
 		PORTD &= ~(1<<LED_5V);
-	}
+	}*/
 	
 	// Light LED
 	PORTD |= (1<<ACTIVITY_LED);
@@ -1010,7 +1009,7 @@ void setup(void) {
 	PORTD &= ~(1<<ACTIVITY_LED);
 	
 	// Setup USART
-	UBRRL = 0; // 1Mbps Baud rate
+	UBRRL = 0x4; // 150Kbps Baud rate
 	sbi(UCSRA, U2X); // Double rate
 	sbi(UCSRB, TXEN); // Transmitter enable
 	sbi(UCSRB, RXEN); // Receiver enable
